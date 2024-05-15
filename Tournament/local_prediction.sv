@@ -28,3 +28,60 @@ module local_prediction(
 
     end
 endmodule
+
+module local_prediction_tb;
+    // Inputs
+    logic clock;
+    logic reset;
+    logic [9:0] historyTable;
+    logic taken;
+    
+    // Outputs
+    logic prediction;
+    
+    // Instantiate the module under test
+    local_prediction dut (
+        .clock(clock),
+        .reset(reset),
+        .historyTable(historyTable),
+        .taken(taken),
+        .prediction(prediction)
+    );
+    
+    // Clock generation
+    always begin
+        clock = 1'b0;
+        #5;
+        clock = 1'b1;
+        #5;
+    end
+    
+    // Test stimulus
+    initial begin
+        reset = 1'b1;
+        historyTable = 10'b0;
+        taken = 1'b0;
+        #10;
+        reset = 1'b0;
+        #10;
+        historyTable = 10'b5;
+        taken = 1'b1;
+        #10;
+        historyTable = 10'b5;
+        taken = 1'b0;
+        #10;
+        historyTable = 10'b20;
+        taken = 1'b1;
+        #10;
+        historyTable = 10'b20;
+        taken = 1'b0;
+        #10;
+        historyTable = 10'b1;
+        taken = 1'b1;
+        #10;
+        historyTable = 10'b1;
+        taken = 1'b0;
+        #10;
+        $finish;
+    end
+endmodule

@@ -18,3 +18,108 @@ end
 assign global_history = ghr_reg;
 
 endmodule
+
+module GHR_testbench;
+
+    // Inputs
+    logic clk;
+    logic rst;
+    logic branch_output;
+    
+    // Outputs
+    logic [11:0] global_history;
+    
+    // Instantiate the GHR module
+    GHR dut (
+        .clk(clk),
+        .rst(rst),
+        .branch_output(branch_output),
+        .global_history(global_history)
+    );
+    
+    // Clock generation
+    always begin
+        clk = 1'b0;
+        #5;
+        clk = 1'b1;
+        #5;
+    end
+    
+    // Reset generation
+    initial begin
+        rst = 1'b1;
+        #10;
+        rst = 1'b0;
+        #10;
+    end
+    
+    // Stimulus
+    initial begin
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b0;
+        #20;
+        branch_output = 1'b1;
+        #20;
+        branch_output = 1'b0; // final value should be 010010100101
+        #20;
+        $finish;
+    end
+    
+endmodule
