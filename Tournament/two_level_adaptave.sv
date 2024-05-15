@@ -5,13 +5,13 @@ module TwoLevelAdaptiveBranchPredictor (
 );
 
     // Define the history table
-    reg [3:0] history_table [0:15];
+    reg [2:0] history_table [0:7];
 
     // Define the pattern history table
     reg [1:0] pattern_history_table [0:3][0:3];
 
     // Calculate the index for the history table
-    reg [3:0] history_index = pc[3:0];
+    reg [2:0] history_index = pc[2:0];
 
     // Calculate the index for the pattern history table
     reg [1:0] pattern_index = {history_table[history_index], history_table[history_index+1]};
