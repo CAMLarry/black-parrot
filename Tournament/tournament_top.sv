@@ -1,8 +1,7 @@
-module tournament_top(clock, reset, PC, taken) {
+module tournament_top(clock, reset, PC, takenIn, prediction)
     input clock, reset;
     input [31:0] PC;
-    output taken; // should this be 2 bits behind PC, to account for pipeline stages?
+    input takenIn;
+    output prediction; // should this be 2 bits behind PC, to account for pipeline stages?
 
-    
 
-}
