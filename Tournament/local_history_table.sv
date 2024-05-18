@@ -9,23 +9,33 @@ module local_history_table (
     logic [9:0] last;
     logic [9:0] twiceLast;
 
-    logic [1024:0] [10:0] mainTable;
+    logic [1024:0] [9:0] mainTable;
 
+	 initial begin
+		for (int i = 0; i < 1024; i++) begin
+			mainTable[i] = 10'b0;
+		end
+	 end
+	 
     always @(posedge clock) begin
         twiceLast <= last;
         last <= current;
         current <= pc [9:0];
-        out <= mainTable [current];
+        //out <= mainTable [current];
         
-
-        if (twiceLastType) begin
+        // need to implement some way to tell this module wether the instruction two cycles ago was a branch or not
+        //if (twiceLastType) begin 
             if (taken) begin
                 mainTable [twiceLast] <= (mainTable [twiceLast] >> 1) + 512;
             end else begin
                 mainTable [twiceLast] <= (mainTable [twiceLast] >> 1);
             end
-        end
+        //end
     end
+	 
+	 always_comb begin
+		out = mainTable[pc[9:0]]; //making this combinational output seems best for sending to the local_prediction on time
+	 end
 endmodule
 
 module local_history_table_tb;
@@ -49,6 +59,33 @@ module local_history_table_tb;
     
     // Clock generation
     always #5 clock = ~clock;
+    
+    /* I tried this on my end and it seemed to work best, remember that the PC changes every clock cycle, running
+    your testbench it was taken many clock cycles for the PC to change
+    clock = 0;
+    reset = 0;
+    taken = 0;
+    pc = 0;
+     @(posedge clock);
+    
+    reset = 1; @(posedge clock);
+    reset = 0; @(posedge clock);
+        
+    pc = 1234; @(posedge clock);
+    pc = 0000; @(posedge clock);
+    pc = 0001; @(posedge clock);
+    pc = 0002; taken = 1; @(posedge clock);
+    pc = 0003; taken = 0; @(posedge clock);
+    pc = 1234; @(posedge clock);
+    pc = 0000; @(posedge clock);
+    pc = 0001; @(posedge clock);
+    
+    pc = 0002; @(posedge clock);
+    pc = 0003; @(posedge clock);
+    pc = 0004; @(posedge clock);
+    pc = 0005; @(posedge clock);
+    pc = 0006; @(posedge clock);
+    */
     
     // Initialize inputs
     initial begin
