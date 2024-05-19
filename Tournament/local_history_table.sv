@@ -95,83 +95,83 @@ module local_history_table_tb;
         pc = 0;
         
         #10 reset = 1;
-        #20 reset = 0;
+        #10 reset = 0;
         
         // Test case 1
-        #30 taken = 1;
-        #40 pc = 1234;
+        taken = 1;
+        #10 pc = 1234;
         
         // Test case 2
-        #50 taken = 0;
-        #60 pc = 1233;
+        taken = 0;
+        #10 pc = 1233;
         
-        #30 taken = 1;
-        #40 pc = 1234;
+        taken = 1;
+        #10 pc = 1234;
 
-        #50 taken = 0;
-        #60 pc = 1233;
+        taken = 0;
+        #10 pc = 1233;
 
-        #30 taken = 1;
-        #40 pc = 1234;
+        taken = 1;
+        #10 pc = 1234;
 
-        #50 taken = 0;
-        #60 pc = 1233;
+        taken = 0;
+        #10 pc = 1233;
 
-        #30 taken = 1;
-        #40 pc = 1234;
+        taken = 1;
+        #10 pc = 1234;
 
-        #50 taken = 0;
-        #60 pc = 1233;
+        taken = 0;
+        #10 pc = 1233;
 
-        #30 taken = 1;
-        #40 pc = 1234;
+        taken = 1;
+        #10 pc = 1234;
 
-        #50 taken = 0;
-        #60 pc = 1233;
+        taken = 0;
+        #10 pc = 1233;
 
-        #30 taken = 1;
-        #40 pc = 1234;
+        taken = 1;
+        #10 pc = 1234;
 
-        #50 taken = 0;
-        #60 pc = 1233;
+        taken = 0;
+        #10 pc = 1233;
 
-        #30 taken = 1;
-        #40 pc = 1234;
+        taken = 1;
+        #10 pc = 1234;
 
-        #50 taken = 0;
-        #60 pc = 1233;
+        taken = 0;
+        #10 pc = 1233;
 
-        #30 taken = 0;
-        #40 pc = 1234;
+        taken = 0;
+        #10 pc = 1234;
 
-        #50 taken = 0;
-        #60 pc = 1235;
+        taken = 0;
+        #10 pc = 1235;
 
         for (int i = 0; i < 25; i++) begin
-            #50 taken = 0;
-            #60 pc = 1236;
+            taken = 0;
+            #10 pc = 1236;
 
-            #50 taken = 0;
-            #60 pc = 1237;
+            taken = 0;
+            #10 pc = 1237;
 
-            #50 taken = 1;
-            #60 pc = 1238;
+            taken = 1;
+            #10 pc = 1238;
         end
 
-        #50 taken = 0;
-            #60 pc = 1236;
+        taken = 0;
+        #10 pc = 1236;
 
-            #50 taken = 0;
-            #60 pc = 1237;
+        taken = 0;
+        #10 pc = 1237;
 
-            #50 taken = 1;
-            #60 pc = 1238;
+        taken = 1;
+        #10 pc = 1238;
 
-            #50 taken = 0;
-            #60 pc = 1239;
+        taken = 0;
+        #10 pc = 1239;
 
-            #50 taken = 0;
-            #60 pc = 1240;
+        aken = 0;
+        #10 pc = 1240;
 
 
         
