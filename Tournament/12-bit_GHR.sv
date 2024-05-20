@@ -1,7 +1,7 @@
 module GHR (
     input logic clk,
     input logic rst,
-    input logic branch_output,
+    input logic branch_output, //this is the branch prediciton output
     output logic [11:0] global_history
 );
 
@@ -11,7 +11,7 @@ always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
         ghr_reg <= 12'b0;
     end else begin
-        ghr_reg <= {branch_output, ghr_reg[10:0]};
+        ghr_reg <= {branch_output, ghr_reg[11:1]}; //shift bits over to right, place branch_output in front
     end
 end
 
@@ -119,7 +119,7 @@ module GHR_testbench;
         #20;
         branch_output = 1'b0; // final value should be 010010100101
         #20;
-        $finish;
+        $stop;
     end
     
 endmodule

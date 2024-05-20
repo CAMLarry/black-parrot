@@ -170,12 +170,12 @@ module local_history_table_tb;
         taken = 0;
         #10 pc = 1239;
 
-        aken = 0;
+        taken = 0;
         #10 pc = 1240;
 
 
         
-        #100 $finish;
+        #100 $stop;
     end
 endmodule
 
