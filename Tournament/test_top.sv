@@ -13,8 +13,8 @@ end*/
 
 wire [11:0] global_history;
 GHR ghr_inst (
-    .clock(clock),
-    .reset(reset),
+    .clk(clock),
+    .rst(reset),
     .branch_output(taken),
     .global_history(global_history)
 );
@@ -24,7 +24,7 @@ global_prediction global_prediction_inst (
 	  .clock(clock),
       .reset(reset),
       .GHR(global_history),
-      .taken(taken),
+      .taken(actually_taken),
       .prediction(global_predictor)
 );
 
@@ -40,7 +40,9 @@ local_history_table LHT (
 
 wire [1:0] choice_predictor;
 choice_predictor choice_predictor_inst (
-    .global(global_history),
+	 .clock(clock),
+	 .reset(reset),
+    .global_history(global_history),
     .actually_taken(actually_taken),
     .choice_prediction(choice_predictor)
 );
@@ -55,8 +57,8 @@ local_prediction local_predictor (
 );
 
 mux_ tournnament_mux_inst (
-    .global(global_predicton_taken),
-    .Local(local_prediction_taken),
+    .global_in(global_predicton_taken),
+    .Local_in(local_prediction_taken),
     .choice_prediction(choice_predictor),
     .branch_predict(taken)
 );
