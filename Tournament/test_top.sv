@@ -7,12 +7,7 @@ module tournament_top_c(
     output logic taken
 );
 
-logic clock;
-logic reset;
-logic [31:0] PC;
-logic actually_taken;
-logic global_predicton_taken;
-logic taken;
+choice_prediction = 2'b11;
 
 
 wire [11:0] global_history;
@@ -50,7 +45,7 @@ local_prediction local_predictor (
     .prediction(local_prediction_taken)
 );
 
-tournnament_mux tournnament_mux_inst (
+mux_ tournnament_mux_inst (
     .global(global_predicton_taken),
     .Local(local_prediction_taken),
     .choice_prediction(choice_predictor),
