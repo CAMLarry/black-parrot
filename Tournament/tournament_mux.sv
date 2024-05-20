@@ -1,16 +1,17 @@
 module mux_ (
-    input wire global_in,
-    input wire Local_in,
-    input wire [1:0] choice_prediction,
-    output wire  branch_predict
+    input logic global_in,
+    input logic Local_in,
+    input logic [1:0] choice_prediction,
+    output logic  branch_predict
 ); 
-    
-    if (global_in_in == Local_in)
-        assign branch_predict = global_in;
-    else if (choice_prediction >= 2'b10)
-        assign branch_predict = global_in;
-    else
-        assign branch_predict = Local_in;
+    always_comb begin
+		 if (global_in == Local_in)
+			  branch_predict = global_in;
+		 else if (choice_prediction > 2'b01) // if 2 or 3 then go with global, otherwise go with local
+			  branch_predict = global_in;
+		 else
+			  branch_predict = Local_in;
+	 end 
 
 endmodule
 
@@ -84,7 +85,7 @@ module mux_tb;
         choice_prediction = 2'b11;
         #10;
         
-        $finish;
+        $stop;
     end
 
 endmodule
