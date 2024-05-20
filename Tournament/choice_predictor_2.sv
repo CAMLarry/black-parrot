@@ -4,6 +4,7 @@ module choice_predictor_2(
     input logic [11:0] global_history, //.global(global_history),
     input logic correct, //.actually_taken(actually_taken),
     input logic lp_prediction,
+    input logic gp_prediction,
     output logic choice_prediction //.choice_prediction(choice_predictor)
 
 );
@@ -28,6 +29,10 @@ module choice_predictor_2(
         lp_last <= lp_current;
         lp_current <= lp_prediction;
 
+        gp_twiceLast <= gp_last;
+        gp_last <= gp_current;
+        gp_current <= gp_prediction;
+
         /*if (mainTable[current] > 3)
             prediction <= 1'b1;
         else 
@@ -49,7 +54,7 @@ module choice_predictor_2(
         else 
 			choice_prediction <= 1'b0;
 
-        taken_actual_global = (correct & (mainTable[twiceLast] > 3'b100))|(~correct & ~(mainTable[twiceLast] > 3'b100));
+        taken_actual_global = (correct & gp_twiceLast)|(~correct & ~gp_twiceLast););
         taken_actual_local = (correct & lp_twiceLast)|(~correct & ~lp_twiceLast);
 
         if (mainTable[twiceLast] > 3'b100)
