@@ -9,7 +9,7 @@ module local_history_table (
     logic [9:0] last;
     logic [9:0] twiceLast;
 
-    logic [1024:0] [9:0] mainTable;
+    logic [1023:0] [9:0] mainTable;
 
 	 initial begin
 		for (int i = 0; i < 1024; i++) begin
