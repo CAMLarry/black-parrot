@@ -1,16 +1,18 @@
 module tournament_top_c(
-    input wire clock,
-    input wire reset,
-    input wire [31:0] PC,
-    input wire actually_taken,
-    output wire taken
+    input logic clock,
+    input logic reset,
+    input logic [31:0] PC,
+    input logic actually_taken,
+    input logic global_predicton_taken,
+    output logic taken
 );
 
-wire clock;
-wire reset;
-wire [31:0] PC;
-wire actually_taken;
-wire taken;
+logic clock;
+logic reset;
+logic [31:0] PC;
+logic actually_taken;
+logic global_predicton_taken;
+logic taken;
 
 
 wire [11:0] global_history;
@@ -21,13 +23,7 @@ GHR ghr_inst (
     .global_history(global_history)
 );
 
-gselect gselect_inst (
-    .clock(clock),
-    .reset(reset),
-    .pc(PC),
-    .branch(taken),
-    .predict(global_predicton_taken)
-);
+
 
 wire [9:0] historyTable;
 local_history_table LHT (
