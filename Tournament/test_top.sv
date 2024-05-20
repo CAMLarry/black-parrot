@@ -3,7 +3,7 @@ module tournament_top_c(
     input logic reset,
     input logic [31:0] PC,
     input logic actually_taken,
-    input logic global_predicton_taken,
+    //input logic global_predicton_taken,
     output logic taken
 );
 
@@ -19,13 +19,13 @@ GHR ghr_inst (
     .global_history(global_history)
 );
 
-wire global_predictor;
+wire global_predicton_taken;
 global_prediction global_prediction_inst (
 	  .clock(clock),
       .reset(reset),
       .GHR(global_history),
       .taken(actually_taken),
-      .prediction(global_predictor)
+      .prediction(global_predicton_taken)
 );
 
 
