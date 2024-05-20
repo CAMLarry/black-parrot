@@ -19,13 +19,13 @@ GHR ghr_inst (
     .global_history(global_history)
 );
 
-wire global_predicton_taken;
-global_prediction global_prediction_inst (
-	  .clock(clock),
-      .reset(reset),
-      .GHR(global_history),
-      .taken(actually_taken),
-      .prediction(global_predicton_taken)
+wire global_predictor;
+global_prediction_table global_prediction_table_inst (
+    .clock(clock),
+    .reset(reset),
+    .GHR(global_history),
+    .taken(taken),
+    .prediction(global_predictor)
 );
 
 
@@ -47,18 +47,29 @@ choice_predictor choice_predictor_inst (
     .choice_prediction(choice_predictor)
 );
 
-wire local_prediction_taken;
+wire local_prediction;
 local_prediction local_predictor (
     .clock(clock),
     .reset(reset),
     .historyTable(historyTable),
     .taken(taken),
-    .prediction(local_prediction_taken)
+    .prediction(local_prediction)
 );
 
+
+
+choice_predictor_2 choice_predictor_2_inst (
+    .global(global_history),
+    .correct(correct),
+    .lp_prediction(local_prediction),
+    .choice_prediction(choice_predictor)
+);
+
+
+
 mux_ tournnament_mux_inst (
-    .global_in(global_predicton_taken),
-    .Local_in(local_prediction_taken),
+    .global(global_predicton),
+    .Local(local_prediction),
     .choice_prediction(choice_predictor),
     .branch_predict(taken)
 );
