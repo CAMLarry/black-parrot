@@ -99,7 +99,8 @@ module local_history_table_tb;
         
         // Test case 1
         taken = 1;
-        #10 pc = 1234;
+        #10 
+        pc = 1234;
         
         // Test case 2
         taken = 0;

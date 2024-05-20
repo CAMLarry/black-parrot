@@ -1,77 +1,65 @@
-module test_top(
+module tournament_top_c(
     input wire clock,
     input wire reset,
     input wire [31:0] PC,
+    input wire actually_taken,
     output wire taken
-)
+);
+wire clock;
+wire reset;
+wire [31:0] PC;
+wire actually_taken;
+wire taken;
 
-gshare gshare_inst (
-    .pc(PC),
-    .branch(taken),
-    .clk(clock),
-    .rst(reset),
-    .predict()
+
+wire [11:0] global_history;
+GHR ghr_inst (
+    .clock(clock),
+    .reset(reset),
+    .branch_output(taken),
+    .global_history(global_history)
 );
 
-two_level_adaptave two_level_adaptave_inst (
+gselect gselect_inst (
+    .clock(clock),
+    .reset(reset),
     .pc(PC),
     .branch(taken),
-    .predict()
+    .predict(global_predicton_taken)
+);
+
+wire [9:0] historyTable;
+local_history_table LHT (
+    .clock(clock),
+    .reset(reset),
+    .taken(taken),
+    .pc(PC),
+    .out(historyTable)
+);
+
+wire [1:0] choice_predictor;
+choice_predictor choice_predictor_inst (
+    .global(global_history),
+    .actually_taken(actually_taken),
+    .choice_prediction(choice_predictor)
+);
+
+wire local_prediction_taken;
+local_prediction local_predictor (
+    .clock(clock),
+    .reset(reset),
+    .historyTable(historyTable),
+    .taken(taken),
+    .prediction(local_prediction_taken)
 );
 
 tournnament_mux tournnament_mux_inst (
-    .global(gshare_inst.predict),
-    .Local(two_level_adaptave_inst.predict),
-    .choice_prediction(3'b111),
+    .global(global_predicton_taken),
+    .Local(local_prediction_taken),
+    .choice_prediction(choice_predictor),
     .branch_predict(taken)
 );
 
 
 
 endmodule
-
-// Testbench for the test_top module
-
-module test_top_tb;
-
-    // Inputs
-    reg clock;
-    reg reset;
-    reg [31:0] PC;
-
-    // Outputs
-    wire taken;
-
-    // Instantiate the test_top module
-    test_top dut (
-        .clock(clock),
-        .reset(reset),
-        .PC(PC),
-        .taken(taken)
-    );
-
-    // Clock generation
-    always #5 clock = ~clock;
-
-    // Reset generation
-    initial begin
-        reset = 1;
-        #10 reset = 0;
-    end
-
-    // Stimulus generation
-    initial begin
-        // Provide stimulus values for PC
-        PC = 32'h00000000;
-        #10 PC = 32'h00000001;
-        #10 PC = 32'h00000002;
-        // Add more stimulus values as needed
-    end
-
-    // Monitor
-    always @(posedge clock) begin
-        $display("PC = %h, taken = %b", PC, taken);
-    end
-
-endmodule
-
