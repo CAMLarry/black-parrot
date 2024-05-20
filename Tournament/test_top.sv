@@ -7,8 +7,9 @@ module tournament_top_c(
     output logic taken
 );
 
+/*initial beign
 choice_prediction = 2'b11;
-
+end*/
 
 wire [11:0] global_history;
 GHR ghr_inst (
@@ -18,6 +19,14 @@ GHR ghr_inst (
     .global_history(global_history)
 );
 
+wire global_predictor;
+global_prediction global_prediction_inst (
+	  .clock(clock),
+      .reset(reset),
+      .GHR(global_history),
+      .taken(taken),
+      .prediction(global_predictor)
+);
 
 
 wire [9:0] historyTable;
