@@ -12,8 +12,8 @@ end*/
 
 wire [11:0] global_history;
 GHR ghr_inst (
-    .clock(clock),
-    .reset(reset),
+    .clk(clock),
+    .rst(reset),
     .branch_output(taken),
     .global_history(global_history)
 );
@@ -39,7 +39,9 @@ local_history_table LHT (
 
 wire [1:0] choice_predictor;
 choice_predictor choice_predictor_inst (
-    .global(global_history),
+	 .clock(clock),
+	 .reset(reset),
+    .global_history(global_history),
     .actually_taken(actually_taken),
     .choice_prediction(choice_predictor)
 );
