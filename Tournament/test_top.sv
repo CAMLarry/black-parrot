@@ -2,8 +2,7 @@ module tournament_top_c(
     input logic clock,
     input logic reset,
     input logic [31:0] PC,
-    input logic actually_taken,
-    input logic global_predicton_taken,
+    input logic correct,
     output logic taken
 );
 
@@ -20,12 +19,12 @@ GHR ghr_inst (
 );
 
 wire global_predictor;
-global_prediction global_prediction_inst (
-	  .clock(clock),
-      .reset(reset),
-      .GHR(global_history),
-      .taken(taken),
-      .prediction(global_predictor)
+global_prediction_table global_prediction_table_inst (
+    .clock(clock),
+    .reset(reset),
+    .GHR(global_history),
+    .taken(taken),
+    .prediction(global_predictor)
 );
 
 
@@ -45,18 +44,29 @@ choice_predictor choice_predictor_inst (
     .choice_prediction(choice_predictor)
 );
 
-wire local_prediction_taken;
+wire local_prediction;
 local_prediction local_predictor (
     .clock(clock),
     .reset(reset),
     .historyTable(historyTable),
     .taken(taken),
-    .prediction(local_prediction_taken)
+    .prediction(local_prediction)
 );
 
+
+
+choice_predictor_2 choice_predictor_2_inst (
+    .global(global_history),
+    .correct(correct),
+    .lp_prediction(local_prediction),
+    .choice_prediction(choice_predictor)
+);
+
+
+
 mux_ tournnament_mux_inst (
-    .global(global_predicton_taken),
-    .Local(local_prediction_taken),
+    .global(global_predicton),
+    .Local(local_prediction),
     .choice_prediction(choice_predictor),
     .branch_predict(taken)
 );
