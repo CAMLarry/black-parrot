@@ -5,6 +5,7 @@ module tournament_top_c(
     input wire actually_taken,
     output wire taken
 );
+
 wire clock;
 wire reset;
 wire [31:0] PC;

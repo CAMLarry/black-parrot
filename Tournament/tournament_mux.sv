@@ -1,33 +1,33 @@
-module mux (
-    input wire global,
-    input wire Local,
+module mux_ (
+    input wire global_in,
+    input wire Local_in,
     input wire [1:0] choice_prediction,
     output wire  branch_predict
 ); 
     
-    if (a == b)
-        assign y = a;
-    else if (sel >= 2'b10)
-        assign y = a;
+    if (global_in_in == Local_in)
+        assign branch_predict = global_in;
+    else if (choice_prediction >= 2'b10)
+        assign branch_predict = global_in;
     else
-        assign y = b;
+        assign branch_predict = Local_in;
 
 endmodule
 
 module mux_tb;
 
     // Inputs
-    reg global;
-    reg Local;
+    reg global_in;
+    reg Local_in;
     reg [1:0] choice_prediction;
 
     // Outputs
     wire branch_predict;
 
     // Instantiate the mux module
-    mux uut (
-        .global(global),
-        .Local(Local),
+    mux_ uut (
+        .global_in(global_in),
+        .Local_in(Local_in),
         .choice_prediction(choice_prediction),
         .branch_predict(branch_predict)
     );
@@ -39,8 +39,8 @@ module mux_tb;
     // Test stimulus
     initial begin
         clk = 0;
-        global = 0;
-        Local = 0;
+        global_in = 0;
+        Local_in = 0;
         choice_prediction = 2'b00;
         #10; 
         choice_prediction = 2'b01;
@@ -51,8 +51,8 @@ module mux_tb;
         #10;
 
         #10;
-        global = 1;
-        Local = 1;
+        global_in = 1;
+        Local_in = 1;
         choice_prediction = 2'b00;
         #10;
         choice_prediction = 2'b01;
@@ -63,7 +63,7 @@ module mux_tb;
         #10;
 
         #10;
-        global = 0;
+        global_in = 0;
         choice_prediction = 2'b00;
         #10;
         choice_prediction = 2'b01;
@@ -73,8 +73,8 @@ module mux_tb;
         choice_prediction = 2'b11;
 
         #10;
-        Local = 0;
-        global = 1;
+        Local_in = 0;
+        global_in = 1;
         choice_prediction = 2'b00;
         #10;
         choice_prediction = 2'b01;
