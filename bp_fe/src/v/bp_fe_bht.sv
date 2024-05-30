@@ -33,7 +33,7 @@ module bp_fe_bht
    , input                                correct_i
    , output logic                         w_yumi_o
 
-   , input                                r_v_i
+   , input                                r_v_i // this oculd mean enable branch prediction
    , input [vaddr_width_p-1:0]            r_addr_i
    , input [ghist_width_p-1:0]            r_ghist_i
    , output logic [bht_row_width_p-1:0]   val_o

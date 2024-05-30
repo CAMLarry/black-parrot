@@ -5,6 +5,22 @@ module tournament_top_c(
     input logic actually_taken,
     //input logic global_predicton_taken,
     output logic taken
+
+
+
+
+    //these are some of the signals that we will actually recieve, based on andreas kuster design
+    input clk_i,
+    input reset_i,
+
+    input w_v_i, // this might be wether it was a branch or not
+    input [bht_idx_width_p-1:0] idx_w_i, //my understanding is that this is telling us the index (PC) of a previous instruction
+    input correct_i, //and this tells us wether we were right or not on that past prediction
+
+    input r_v_i, // this is like an enable signal, if this is zero predict_o always zero
+    input [bht_idx_width_p-1:0] idx_r_i, // 
+    output predict_o
+
 );
 
 /*initial beign
