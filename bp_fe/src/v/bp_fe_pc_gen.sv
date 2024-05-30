@@ -164,6 +164,7 @@ module bp_fe_pc_gen
   ///////////////////////////
   // BHT
   ///////////////////////////
+  /*
   wire bht_r_v_li = if1_we_i;
   wire [vaddr_width_p-1:0] bht_r_addr_li = next_pc;
   wire [ghist_width_p-1:0] bht_r_ghist_li = ghistory_n;
@@ -200,6 +201,15 @@ module bp_fe_pc_gen
 
      ,.init_done_o(bht_init_done_lo)
      );
+    */
+
+     tournament_top_c top_test (
+        .clock(clk_i),
+        .reset(reset_i),
+        .PC(next_pc),
+        .actually_taken(attaboy_yumi_o),
+        .taken(next_taken)
+      );
 
   /////////////////////////////////////////////////////////////////////////////////////
   // IF1
