@@ -2,9 +2,9 @@ module tournament_top_c(
     input logic clock,
     input logic reset,
     input logic [31:0] PC,
-    input logic actually_taken,
+    input logic correct,
     //input logic global_predicton_taken,
-    output logic taken
+    output logic prediction_final
 
 
 
@@ -31,7 +31,7 @@ wire [11:0] global_history;
 GHR ghr_inst (
     .clk(clock),
     .rst(reset),
-    .branch_output(taken),
+    .branch_output(actually_taken),
     .global_history(global_history)
 );
 
@@ -40,7 +40,7 @@ global_prediction_table global_prediction_table_inst (
     .clock(clock),
     .reset(reset),
     .GHR(global_history),
-    .taken(taken),
+    .taken(actually_taken),
     .prediction(global_predictor)
 );
 
@@ -49,7 +49,7 @@ wire [9:0] historyTable;
 local_history_table LHT (
     .clock(clock),
     .reset(reset),
-    .taken(taken),
+    .taken(actually_taken),
     .pc(PC),
     .out(historyTable)
 );
@@ -87,9 +87,27 @@ mux_ tournnament_mux_inst (
     .global(global_predicton),
     .Local(local_prediction),
     .choice_prediction(choice_predictor),
-    .branch_predict(taken)
+    .branch_predict(prediction_final)
 );
 
+// im trying some stuff to make it so that we can send in actual_taken because it is used in all modules.
+always @(posedge clock) begin
+    gp_twiceLast <= gp_last;
+    gp_last <= global_prediction;
+    
+    lp_twiceLast <= lp_last;
+    lp_last <= local_prediction;
 
+    cp_twiceLast <= cp_last;
+    cp_last <= choice_prediction;
+end
+
+always_comb begin
+    if (choice_prediction > 3) begin
+        actual_taken = (correct & gp_twiceLast)|(~correct & ~gp_twiceLast);
+    end else begin
+        actual_taken = (correct & lp_twiceLast)|(~correct & ~lp_twiceLast);
+    end
+end
 
 endmodule
