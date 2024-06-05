@@ -221,3 +221,237 @@ end
 
 endmodule
 
+
+module choice_predictor(
+    input logic clock,
+    input logic reset,
+    input logic [11:0] global_history, //.global(global_history),
+    input logic actually_taken, //.actually_taken(actually_taken),
+    output logic choice_prediction //.choice_prediction(choice_predictor)
+);
+
+    logic [11:0] last;
+    logic [11:0] twiceLast;
+    logic [11:0] current;
+    logic [4095:0] [2:0] mainTable;
+	 
+	 initial begin
+		for (int i = 0; i < 1024; i++) begin
+			mainTable [i] = 3'b100;
+		end
+	 end
+	 
+    always @(posedge clock) begin
+        twiceLast <= last;
+        last <= current;
+        current <= global_history;
+
+        /*if (mainTable[current] > 3)
+            prediction <= 1'b1;
+        else 
+            prediction <= 1'b0;*/
+
+        if (actually_taken) begin
+            if (mainTable [twiceLast] < 7) // prevent overflow
+                mainTable [twiceLast] <=  mainTable [twiceLast] + 1;
+        end else begin
+            if (mainTable [twiceLast] > 0) // prevent underflow
+                mainTable [twiceLast] <=  mainTable [twiceLast] - 1;
+		  end
+
+    end
+	 
+	 always_comb begin
+		if (mainTable[global_history] > 3)
+			choice_prediction <= 1'b1;
+      else 
+			choice_prediction <= 1'b0;
+	 end
+	 
+endmodule
+
+module global_prediction(
+    input logic clock,
+    input logic reset,
+    input logic [11:0] GHR,
+    input logic taken,
+    output logic prediction
+);
+    logic [11:0] last;
+    logic [11:0] twiceLast;
+    logic [11:0] current;
+    logic [4096:0] [2:0] mainTable;
+	 
+	 initial begin
+		for (int i = 0; i < 1024; i++) begin
+			mainTable [i] = 3'b100;
+		end
+	 end
+	 
+    always @(posedge clock) begin
+        twiceLast <= last;
+        last <= current;
+        current <= GHR;
+
+        /*if (mainTable[current] > 3)
+            prediction <= 1'b1;
+        else 
+            prediction <= 1'b0;*/
+
+        if (taken) begin
+            if (mainTable [twiceLast] < 7) // prevent overflow
+                mainTable [twiceLast] <=  mainTable [twiceLast] + 1;
+        end else begin
+            if (mainTable [twiceLast] > 0) // prevent underflow
+                mainTable [twiceLast] <=  mainTable [twiceLast] - 1;
+		  end
+
+    end
+	 
+	 always_comb begin
+		if (mainTable[GHR] > 3)
+			prediction <= 1'b1;
+      else 
+			prediction <= 1'b0;
+	 end
+	 
+endmodule
+
+module local_history_table (
+    /*input logic clock,
+    input logic reset,
+    input logic taken,
+    input logic [31:0] pc,
+    output logic [9:0] out,*/
+
+    //these are some of the signals that we will actually recieve, based on andreas kuster design
+    input clk_i,
+    input reset_i,
+
+    input w_v_i, // this might be wether it was a branch or not
+    input [31:0] w_idx_i, //my understanding is that this is telling us the index (PC) of a previous instruction
+    input correct_i, //and this tells us wether we were right or not on that past prediction
+
+    //input r_v_i, // this is like an enable signal, if this is zero predict_o always zero
+    input [31:0] r_addr_i, // bht_idx_width_p
+    output logic [9:0] out
+    //output predict_o
+);
+    //logic [9:0] current;
+    //logic [9:0] last;
+    //logic [9:0] twiceLast;
+
+    logic [1023:0] [9:0] mainTable;
+
+	 initial begin
+		for (int i = 0; i < 1024; i++) begin
+			mainTable[i] = 10'b0;
+		end
+	 end
+	 
+    always @(posedge clk_i) begin
+        /*twiceLast <= last;
+        last <= current;
+        current <= pc [9:0];*/
+        //out <= mainTable [current];
+        
+        // need to implement some way to tell this module wether the instruction two cycles ago was a branch or not
+        if (w_v_i) begin // if this current "past" instruction was a branch
+            if (correct_i) begin
+                mainTable [r_addr_i] <= (mainTable [r_addr_i] >> 1) + 512;
+            end else begin
+                mainTable [r_addr_i] <= (mainTable [r_addr_i] >> 1);
+            end
+        end
+    end
+	 
+	 always_comb begin
+		out = mainTable[r_addr_i]; //making this combinational output seems best for sending to the local_prediction on time
+	 end
+endmodule
+
+module local_prediction(
+    input logic clock,
+    input logic reset,
+    input logic [9:0] historyTable,
+    input logic taken,
+    output logic prediction
+);
+    logic [9:0] last;
+    logic [9:0] twiceLast;
+    logic [9:0] current;
+    logic [1023:0] [2:0] mainTable;
+	 
+	 initial begin
+		for (int i = 0; i < 1024; i++) begin
+			mainTable [i] = 3'b100;
+		end
+	 end
+	 
+    always @(posedge clock) begin
+        twiceLast <= last;
+        last <= current;
+        current <= historyTable;
+
+        /*if (mainTable[current] > 3)
+            prediction <= 1'b1;
+        else 
+            prediction <= 1'b0;*/
+
+        if (taken) begin
+            if (mainTable [twiceLast] < 7) // prevent overflow
+                mainTable [twiceLast] <=  mainTable [twiceLast] + 1;
+        end else begin
+            if (mainTable [twiceLast] > 0) // prevent underflow
+                mainTable [twiceLast] <=  mainTable [twiceLast] - 1;
+		  end
+
+    end
+	 
+	 always_comb begin
+		if (mainTable[historyTable] > 3)
+			prediction <= 1'b1;
+      else 
+			prediction <= 1'b0;
+	 end
+	 
+endmodule
+
+module mux_ (
+    input logic global_in,
+    input logic Local_in,
+    input logic choice_prediction,
+    output logic  branch_predict
+); 
+    always_comb begin
+		 if (global_in == Local_in)
+			  branch_predict = global_in;
+		 else if (choice_prediction = 1) // if 1 global
+			  branch_predict = global_in;
+		 else
+			  branch_predict = Local_in;
+	 end 
+
+endmodule
+
+module GHR (
+    input logic clk,
+    input logic rst,
+    input logic branch_output, //this is the branch prediciton output
+    output logic [11:0] global_history
+);
+
+logic [11:0] ghr_reg;
+
+always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+        ghr_reg <= 12'b0;
+    end else begin
+        ghr_reg <= {branch_output, ghr_reg[11:1]}; //shift bits over to right, place branch_output in front
+    end
+end
+
+assign global_history = ghr_reg;
+
+endmodule
+
