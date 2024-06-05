@@ -25,8 +25,8 @@ module bp_fe_bht
 
    , output logic                         init_done_o
 
-   , input                                w_v_i
-   , input [bht_idx_width_p-1:0]          w_idx_i
+   , input                                w_v_i // enable for a past history
+   , input [bht_idx_width_p-1:0]          w_idx_i // 
    , input [bht_offset_width_p-1:0]       w_offset_i
    , input [ghist_width_p-1:0]            w_ghist_i
    , input [bht_row_width_p-1:0]          val_i

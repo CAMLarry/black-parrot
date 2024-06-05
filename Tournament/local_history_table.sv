@@ -1,13 +1,26 @@
 module local_history_table (
-    input logic clock,
+    /*input logic clock,
     input logic reset,
     input logic taken,
     input logic [31:0] pc,
+    output logic [9:0] out,*/
+
+    //these are some of the signals that we will actually recieve, based on andreas kuster design
+    input clk_i,
+    input reset_i,
+
+    input w_v_i, // this might be wether it was a branch or not
+    input [31:0] w_idx_i, //my understanding is that this is telling us the index (PC) of a previous instruction
+    input correct_i, //and this tells us wether we were right or not on that past prediction
+
+    //input r_v_i, // this is like an enable signal, if this is zero predict_o always zero
+    input [31:0] r_addr_i, // bht_idx_width_p
     output logic [9:0] out
+    //output predict_o
 );
-    logic [9:0] current;
-    logic [9:0] last;
-    logic [9:0] twiceLast;
+    //logic [9:0] current;
+    //logic [9:0] last;
+    //logic [9:0] twiceLast;
 
     logic [1023:0] [9:0] mainTable;
 
@@ -17,24 +30,24 @@ module local_history_table (
 		end
 	 end
 	 
-    always @(posedge clock) begin
-        twiceLast <= last;
+    always @(posedge clk_i) begin
+        /*twiceLast <= last;
         last <= current;
-        current <= pc [9:0];
+        current <= pc [9:0];*/
         //out <= mainTable [current];
         
         // need to implement some way to tell this module wether the instruction two cycles ago was a branch or not
-        //if (twiceLastType) begin 
-            if (taken) begin
-                mainTable [twiceLast] <= (mainTable [twiceLast] >> 1) + 512;
+        if (w_v_i) begin // if this current "past" instruction was a branch
+            if (correct_i) begin
+                mainTable [r_addr_i] <= (mainTable [r_addr_i] >> 1) + 512;
             end else begin
-                mainTable [twiceLast] <= (mainTable [twiceLast] >> 1);
+                mainTable [r_addr_i] <= (mainTable [r_addr_i] >> 1);
             end
-        //end
+        end
     end
 	 
 	 always_comb begin
-		out = mainTable[pc[9:0]]; //making this combinational output seems best for sending to the local_prediction on time
+		out = mainTable[r_addr_i]; //making this combinational output seems best for sending to the local_prediction on time
 	 end
 endmodule
 
@@ -179,4 +192,3 @@ module local_history_table_tb;
         #100 $stop;
     end
 endmodule
-

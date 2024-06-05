@@ -14,11 +14,11 @@ module tournament_top_c(
     input reset_i,
 
     input w_v_i, // this might be wether it was a branch or not
-    input [bht_idx_width_p-1:0] idx_w_i, //my understanding is that this is telling us the index (PC) of a previous instruction
+    input [bht_idx_width_p-1:0] w_idx_i, //my understanding is that this is telling us the index (PC) of a previous instruction
     input correct_i, //and this tells us wether we were right or not on that past prediction
 
     input r_v_i, // this is like an enable signal, if this is zero predict_o always zero
-    input [bht_idx_width_p-1:0] idx_r_i, // 
+    input [bht_idx_width_p-1:0] r_addr_i, // 
     output predict_o
 
 );
