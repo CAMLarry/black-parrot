@@ -21,6 +21,31 @@ module tournament_top_c(
     input [bht_idx_width_p-1:0] r_addr_i, // 
     output predict_o
 
+    //bht_r_addr_li is the program counter
+
+    /*
+       (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+
+     ,.r_v_i(bht_r_v_li)
+     ,.r_addr_i(bht_r_addr_li) program counter?
+     ,.r_ghist_i(bht_r_ghist_li)
+     ,.val_o(bht_row_lo)
+     ,.pred_o(bht_pred_lo)
+
+     ,.w_v_i(bht_w_v_li)
+     ,.w_idx_i(bht_w_idx_li)
+     ,.w_offset_i(bht_w_offset_li)
+     ,.w_ghist_i(bht_w_ghist_li)
+     ,.correct_i(attaboy_yumi_o)
+     ,.val_i(bht_row_li)
+     ,.w_yumi_o(bht_w_yumi_lo)
+
+     ,.init_done_o(bht_init_done_lo)
+
+
+    */
+
 );
 
 /*initial beign
@@ -92,22 +117,11 @@ mux_ tournnament_mux_inst (
 
 // im trying some stuff to make it so that we can send in actual_taken because it is used in all modules.
 always @(posedge clock) begin
-    gp_twiceLast <= gp_last;
-    gp_last <= global_prediction;
     
-    lp_twiceLast <= lp_last;
-    lp_last <= local_prediction;
-
-    cp_twiceLast <= cp_last;
-    cp_last <= choice_prediction;
 end
 
 always_comb begin
-    if (choice_prediction > 3) begin
-        actual_taken = (correct & gp_twiceLast)|(~correct & ~gp_twiceLast);
-    end else begin
-        actual_taken = (correct & lp_twiceLast)|(~correct & ~lp_twiceLast);
-    end
+    
 end
 
 endmodule

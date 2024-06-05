@@ -40,6 +40,85 @@ module bp_fe_bht
    , output logic                         pred_o
    );
 
+  wire [11:0] global_history;
+GHR ghr_inst (
+    .clk(clk_i),
+    .rst(reset_i),
+    .branch_output(actually_taken),
+    .global_history(global_history)
+);
+
+wire global_predictor;
+global_prediction_table global_prediction_table_inst (
+    .clock(clk_i),
+    .reset(reset_i),
+    .GHR(global_history),
+    .taken(actually_taken),
+    .prediction(global_predictor)
+);
+
+
+wire [9:0] historyTable;
+local_history_table LHT (
+    .clock(clk_i),
+    .reset(reset_i),
+    .taken(actually_taken),
+    .pc(r_addr_i),
+    .out(historyTable)
+);
+
+wire [1:0] choice_predictor;
+choice_predictor choice_predictor_inst (
+	 .clock(clk_i),
+	 .reset(reset_i),
+   .global_history(global_history),
+   .actually_taken(actually_taken),
+   .choice_prediction(choice_predictor)
+);
+
+wire local_prediction;
+local_prediction local_predictor (
+    .clock(clk_i),
+    .reset(reset_i),
+    .historyTable(historyTable),
+    .taken(actually_taken),
+    .prediction(local_prediction)
+);
+
+
+mux_ tournnament_mux_inst (
+    .global(val_o[pred_idx_lo]), // adding in their global predictor
+    .Local(local_prediction),
+    .choice_prediction(choice_predictor),
+    .branch_predict(prediction_final)
+);
+
+assign pred_o = prediction_final;
+
+
+// im trying some stuff to make it so that we can send in actual_taken because it is used in all modules.
+always @(posedge clock) begin
+    cp_twiceLast <= cp_last;
+    cp_last <= choice_predictor;
+
+    global_prediction_twiceLast <= global_prediction_last;
+    global_prediction_last <= global_predicton;
+
+    local_prediction_twiceLast <= local_prediction_last;
+    local_prediction_last <= local_prediction;
+end
+
+always_comb begin
+    if (correct_i && (cp_twiceLast > 3))
+        actually_taken <= global_prediction_twiceLast;
+    else 
+        actually_taken = local_prediction_twiceLast;
+end
+
+
+
+
+
   // Initialization state machine
   enum logic [1:0] {e_reset, e_clear, e_run} state_n, state_r;
   wire is_reset = (state_r == e_reset);
@@ -136,7 +215,9 @@ module bp_fe_bht
    end
 
   assign val_o = r_data_lo;
-  assign pred_o = val_o[pred_idx_lo];
+
+  //removed their pred_o
+  //assign pred_o = val_o[pred_idx_lo];
 
 endmodule
 
