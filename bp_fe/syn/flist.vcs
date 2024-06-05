@@ -191,6 +191,12 @@ $BP_FE_DIR/src/v/bp_fe_icache.sv
 $BP_FE_DIR/src/v/bp_fe_instr_scan.sv
 $BP_FE_DIR/src/v/bp_fe_pc_gen.sv
 $BP_FE_DIR/src/v/bp_fe_top.sv
+$BP_FE_DIR/src/v/12-bitGHR.sv
+$BP_FE_DIR/src/v/choice_predictor.sv
+$BP_FE_DIR/src/v/global_prediction_table.sv
+$BP_FE_DIR/src/v/local_history_table.sv
+$BP_FE_DIR/src/v/local_prediction.sv
+$BP_FE_DIR/src/v/tournament_mux.sv
 ## ME files
 # LCE
 $BP_ME_DIR/src/v/lce/bp_lce.sv
