@@ -111,8 +111,13 @@ end
 always_comb begin
     if (correct_i && (cp_twiceLast > 3))
         actually_taken <= global_prediction_twiceLast;
-    else 
-        actually_taken = local_prediction_twiceLast;
+    else if (cp_twiceLast <= 3)
+        actually_taken <= local_prediction_twiceLast;
+    else if (!correct_i && (cp_twiceLast > 3))
+        actually_taken <= !global_prediction_twiceLast;
+    else
+        actually_taken <= !local_prediction_twiceLast;
+
 end
 
 

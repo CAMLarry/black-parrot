@@ -39,9 +39,9 @@ module choice_predictor(
 	 
 	 always_comb begin
 		if (mainTable[global_history] > 3)
-			choice_prediction <= 1'b1;
+			choice_prediction <= 1'b1; // Global
       else 
-			choice_prediction <= 1'b0;
+			choice_prediction <= 1'b0; // Local
 	 end
 	 
 endmodule
